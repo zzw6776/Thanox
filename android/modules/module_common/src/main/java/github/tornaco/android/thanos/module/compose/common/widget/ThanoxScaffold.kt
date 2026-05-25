@@ -243,11 +243,15 @@ class SearchBarState {
     val showSearchBar get() = _showSearchBar
 
     private var _textFieldValue by mutableStateOf(TextFieldValue(""))
+    private var _keyword by mutableStateOf("")
     val textFieldValue get() = _textFieldValue
-    val keyword get() = _textFieldValue.text
+    val keyword get() = _keyword
 
     fun updateTextFieldValue(value: TextFieldValue) {
         _textFieldValue = value
+        if (_keyword != value.text) {
+            _keyword = value.text
+        }
     }
 
     fun inputKeyword(value: String) {
