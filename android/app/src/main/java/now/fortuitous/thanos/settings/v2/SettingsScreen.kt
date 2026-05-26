@@ -401,8 +401,9 @@ private fun uiSettings(
     val pref = Pref(context)
     val dynamicColor by pref.uiThemeDynamicColor.collectAsStateWithLifecycle(true)
     val darkConfig by pref.uiThemeDarkModeConfig.collectAsStateWithLifecycle(ThemeSettings.DarkThemeConfig.FOLLOW_SYSTEM)
+    val darkModeTitle = stringResource(R.string.settings_ui_dark_mode_title)
     val darkModeDialog = rememberMenuDialogState<Unit>(
-        title = { stringResource(R.string.settings_ui_dark_mode_title) }, menuItems = ThemeSettings.DarkThemeConfig.entries.map {
+        title = { darkModeTitle }, menuItems = ThemeSettings.DarkThemeConfig.entries.map {
             MenuDialogItem(id = it.name, title = darkThemeConfigLabel(it))
         }
     ) { _, id ->
@@ -443,7 +444,7 @@ private fun uiSettings(
         ),
         Preference.TextPreference(
             icon = github.tornaco.android.thanos.icon.remix.R.drawable.ic_remix_moon_fill,
-            title = stringResource(R.string.settings_ui_dark_mode_title),
+            title = darkModeTitle,
             summary = darkThemeConfigLabel(darkConfig),
             onClick = {
                 darkModeDialog.show()
