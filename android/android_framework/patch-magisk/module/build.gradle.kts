@@ -74,6 +74,9 @@ fun calcSha256(file: File): String {
 }
 
 afterEvaluate {
+    val extractBridgeJar = project(":android_framework:patch-magisk:bridge-dex-app")
+        .tasks.named("extractBridgeJar")
+
     android.libraryVariants.forEach { variant ->
         val variantCapped = variant.name.capitalize()
         val variantLowered = variant.name.toLowerCase()
@@ -82,6 +85,7 @@ afterEvaluate {
         task("prepareMagiskFiles${variantCapped}") {
             group = "magisk"
             dependsOn("assemble$variantCapped")
+            dependsOn(extractBridgeJar)
 
             doFirst {
                 delete { delete(magiskDir) }
@@ -134,12 +138,12 @@ afterEvaluate {
                 }
                 // copy jars
                 val dexOutDir = file("${magiskDir}/system/framework/")
-                val jarSrcFile = file("$outDir/android_framework/patch-magisk/bridge-dex-app/outputs/thanox-bridge.jar")
+                val jarSrcFile = extractBridgeJar.get()
+                    .outputs.files.singleFile
                 log("Copying Jars from $jarSrcFile, exists? ${jarSrcFile.exists()}")
                 log("Copying Jars to $dexOutDir")
-                while (!jarSrcFile.exists()) {
-                    Thread.sleep(1000)
-                    log("Copying Jars, waiting for src file.")
+                check(jarSrcFile.exists()) {
+                    "Bridge jar not found: $jarSrcFile"
                 }
                 copy {
                     from(jarSrcFile)
