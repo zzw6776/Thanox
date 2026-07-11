@@ -1,0 +1,15 @@
+{
+  "author": "Codex",
+  "version": 1,
+  "tags": ["app_opt"],
+  "profile": {
+    "name": "鸿蒙智行数字钥匙后台唤醒",
+    "description": "手动触发情景值 hima_key_wake 时，在不启动鸿蒙智行界面的情况下后台拉起鸿蒙智行和数字车钥匙相关服务，并禁用 pushcore 的 XService，尽量只保留主进程数字钥匙服务。",
+    "priority": 2,
+    "delay": 0,
+    "condition": "shortcutLaunched == true && shortcutValue == \"hima_key_wake\"",
+    "actions": [
+      "pkg=\"app.huawei.motor\";am=thanos.activityManager;if(am.isPkgStartBlocking(pkg)){am.setPkgStartBlockEnabled(pkg,false);}if(am.isPkgBgRestricted(pkg)){am.setPkgBgRestrictEnabled(pkg,false);}su.exe(\"pm disable app.huawei.motor/app.huawei.auto.message.manager.XService\");if(!am.isPackageRunning(pkg)){activity.launchProcessForPackage(pkg);}su.exe(\"am start-foreground-service -n app.huawei.motor/app.huawei.auto.vehicle.services.ICCECarKeyAliveService\");su.exe(\"am start-foreground-service -n app.huawei.motor/com.huawei.business.digitalkeyx.digitalkeyx.ble.service.BLEForegroundService\");su.exe(\"am start-foreground-service -n app.huawei.motor/app.huawei.motor.base.bleopen.BleICCEService\");ui.showShortToast(\"鸿蒙智行数字钥匙已后台唤醒\");log.log(\"HIMA key wake triggered with XService disabled\");"
+    ]
+  }
+}

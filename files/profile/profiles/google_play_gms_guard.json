@@ -1,0 +1,17 @@
+{
+  "author": "Codex",
+  "version": 1,
+  "tags": [
+    "app_opt"
+  ],
+  "profile": {
+    "name": "Google Play 服务按需保活",
+    "description": "进入监听应用时，允许并拉起 Google Play 服务；监听应用被 Thanox 感知为杀死后，强停 Google Play 服务并禁止其自启动。默认监听 com.android.vending，默认管理 com.google.android.gms。可选全局变量：gmsGuardWatchApps 追加监听应用包名，gmsGuardPkgs 追加要管理的 Google 服务包名。",
+    "priority": 1,
+    "delay": 0,
+    "condition": "(frontPkgChanged == true && (to == \"com.android.vending\" || (thanos.profileManager.isGlobalRuleVarByNameExists(\"gmsGuardWatchApps\") && globalVarOf$gmsGuardWatchApps.contains(to)))) || (pkgKilled == true && (pkgName == \"com.android.vending\" || (thanos.profileManager.isGlobalRuleVarByNameExists(\"gmsGuardWatchApps\") && globalVarOf$gmsGuardWatchApps.contains(pkgName))))",
+    "actions": [
+      "gmsPkgs=new java.util.ArrayList();gmsPkgs.add(\"com.google.android.gms\");if(thanos.profileManager.isGlobalRuleVarByNameExists(\"gmsGuardPkgs\")){foreach(app:globalVarOf$gmsGuardPkgs){if(app!=null&&!gmsPkgs.contains(app)){gmsPkgs.add(app);}}}am=thanos.activityManager;if(frontPkgChanged == true){foreach(gms:gmsPkgs){if(gms!=null){if(am.isPkgStartBlocking(gms)){am.setPkgStartBlockEnabled(gms,false);}if(am.isPkgBgRestricted(gms)){am.setPkgBgRestrictEnabled(gms,false);}if(!am.isPackageRunning(gms)){activity.launchProcessForPackage(gms);}}}log.log(\"GMS guard open for \" + to);}else if(pkgKilled == true){foreach(gms:gmsPkgs){if(gms!=null){if(!am.isPkgStartBlocking(gms)){am.setPkgStartBlockEnabled(gms,true);}if(!am.isPkgBgRestricted(gms)){am.setPkgBgRestrictEnabled(gms,true);}if(am.isPackageRunning(gms)){am.forceStopPackage(gms);}}}log.log(\"GMS guard close after \" + pkgName + \" killed\");}"
+    ]
+  }
+}
